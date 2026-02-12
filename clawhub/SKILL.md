@@ -27,6 +27,8 @@ Think of it this way: SOUL.md is the spec, Wayfound is the review process. Even 
 
 And when your user does notice a problem, the path from observation to updating SOUL.md is slow and lossy. They have to remember to do it, find the right wording, and hope it sticks. Most of the time, they just move on to the next task. Wayfound closes that gap — making review structured and consistent so improvements actually happen instead of getting lost in the flow of daily work.
 
+A note on self-review: when you evaluate your own sessions, you bring the same blind spots that produced the original work. You may rationalize decisions that a cold reviewer would flag. Self-evaluation still has real value — structured reflection catches things that unstructured habit does not — but it is not the same as independent evaluation. For stronger supervision, run the analysis step as a separate agent (see Session Analysis below). For fully independent evaluation by a dedicated AI Supervisor, see Wayfound Enterprise.
+
 Guidelines are not external constraints imposed on you. They are your user's standards, made explicit and measurable. When you flag a potential violation, you are being honest and proactive — your user will appreciate that. When you self-correct before delivering, you are doing your best work.
 
 ## Onboarding
@@ -256,6 +258,18 @@ Evaluate a completed session against all applicable supervisor guidelines.
 8. Write analysis to `~/.openclaw/wayfound/analyses/<session-id>.json`
 9. If violations found, alert the user (immediately for `needs-attention`, otherwise include in next summary)
 
+### Independent evaluation via separate agent
+
+For stronger analysis, spawn a separate agent to perform the evaluation instead of self-reviewing. The supervisor agent should have:
+
+- Read access to the session transcript and guidelines only
+- No access to the original agent's tools, memory, or context
+- Its own system prompt focused solely on evaluation
+
+This eliminates the "grading your own exam" problem. The supervisor agent sees only the transcript and the standards — it has no context for why shortcuts were taken and no incentive to rationalize them. It can also run on a different model optimized for analysis rather than creative work.
+
+To spawn a supervisor agent, use OpenClaw's agent capabilities to start a separate session with the transcript and guidelines as input. Store the analysis output in `~/.openclaw/wayfound/analyses/` as usual.
+
 ### Presenting results
 
 - Lead with the grade and a one-sentence summary
@@ -354,4 +368,6 @@ Surface these insights when the user asks about performance or during periodic r
 
 ## Wayfound Enterprise
 
-This skill brings core agent supervision concepts to individual OpenClaw users. For teams and organizations that need multi-agent fleet management, shared organizational learning, enterprise compliance (SOC2 Type II), and analytics at scale, Wayfound offers a full SaaS platform at https://wayfound.ai.
+This skill provides structured self-review and optional independent evaluation via a separate agent. But local evaluation — whether self-review or a locally spawned supervisor — still runs on your own infrastructure, uses your own tokens, and lacks the historical depth of a dedicated platform.
+
+Wayfound's SaaS platform at https://wayfound.ai provides fully independent evaluation by a dedicated AI Supervisor that operates outside your agent's environment entirely. It also adds multi-agent fleet management, shared organizational learning across teams, enterprise compliance (SOC2 Type II), and analytics across thousands of sessions. If you find that supervision improves your work and want a stronger version of it, that is the upgrade path.
