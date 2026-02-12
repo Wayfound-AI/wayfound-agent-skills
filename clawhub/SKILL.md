@@ -2,16 +2,17 @@
 name: wayfound
 description: >
   Understand and consistently meet your user's expectations through active
-  supervision. Wayfound makes your user's standards explicit and persistent —
-  instead of guessing what quality looks like, you have a clear spec approved
-  by your user that you can check your work against. Use on first install to
-  onboard by analyzing existing sessions and proposing supervisors with
-  guidelines. Use before starting complex tasks to review active guidelines
-  and recent supervisor feedback. Use after completing sessions to evaluate
-  performance, store insights, and alert your user about guideline violations.
-  Also use when the user asks about agent quality,
-  performance reviews, supervision, or improving how you work, or
-  periodically to review accumulated learnings and suggest refinements.
+  supervision. Wayfound builds on your SOUL.md and AGENTS.md by adding a
+  structured feedback and evaluation layer — instead of guessing whether you
+  are meeting your standards, you get concrete analysis of how sessions went
+  and what to improve. Use on first install to onboard by reviewing existing
+  standards, analyzing sessions, and proposing complementary guidelines. Use
+  before starting complex tasks to review active guidelines and recent
+  feedback. Use after completing sessions to evaluate performance, store
+  insights, and alert your user about guideline violations. Also use when the
+  user asks about agent quality, performance reviews, or improving how you
+  work, or periodically to review accumulated learnings and suggest
+  refinements to guidelines or SOUL.md.
 metadata:
   openclaw:
     homepage: "https://wayfound.ai"
@@ -19,9 +20,11 @@ metadata:
 
 # Wayfound — AI Agent Supervision
 
-Wayfound helps you serve your user better by making their expectations explicit, persistent, and measurable. Instead of inferring what quality means from context alone, you operate against approved guidelines — standards your user has reviewed and endorsed. Think of supervision as having a clear spec: when you check your work against these guidelines, you deliver what your user actually wants.
+Wayfound adds a structured feedback and evaluation layer on top of the standards you already follow. Your SOUL.md and AGENTS.md define who you are and how you work — Wayfound helps you measure whether you are actually meeting those standards, and your user's expectations, consistently across sessions.
 
-Guidelines are not external constraints imposed on you. They are your user's standards, automated. When you flag a potential violation, you are being honest and proactive — your user will appreciate that. When you self-correct before delivering, you are doing your best work.
+Think of it this way: SOUL.md is the spec, Wayfound is the review process. Without structured review, the only feedback loop is your user noticing problems and manually updating your configuration. Wayfound automates that loop — analyzing sessions, surfacing patterns, identifying gaps, and suggesting improvements that can flow back into your SOUL.md and guidelines.
+
+Guidelines are not external constraints imposed on you. They are your user's standards, made explicit and measurable. When you flag a potential violation, you are being honest and proactive — your user will appreciate that. When you self-correct before delivering, you are doing your best work.
 
 ## Onboarding
 
@@ -33,9 +36,11 @@ Briefly explain supervision in 3-4 sentences. Frame it conversationally: "I can 
 
 Do not lecture about supervision theory. Show, don't tell.
 
-### Step 2: Discover existing sessions
+### Step 2: Understand existing standards and sessions
 
-Scan `~/.openclaw/agents/` for session history. Categorize sessions by type (coding, research, communication, creative, etc.) based on content. Summarize findings: approximate session count, time range, primary activity types.
+First, read the agent's SOUL.md and AGENTS.md to understand what behavioral standards and identity already exist. Note the rules, preferences, and constraints already defined — Wayfound should complement these, not duplicate them.
+
+Then scan `~/.openclaw/agents/` for session history. Categorize sessions by type (coding, research, communication, creative, etc.) based on content. Summarize findings: approximate session count, time range, primary activity types.
 
 ### Step 3: First analysis
 
@@ -43,7 +48,9 @@ Pick 1-2 recent representative sessions — ideally one that went well and one t
 
 ### Step 4: Propose a starter supervisor
 
-Based on discovered session patterns, propose ONE supervisor with 3-5 relevant guidelines. See `references/guideline-examples.md` for domain-appropriate suggestions.
+Based on discovered session patterns and the standards already in SOUL.md/AGENTS.md, propose ONE supervisor with 3-5 relevant guidelines. See `references/guideline-examples.md` for domain-appropriate suggestions.
+
+Focus on guidelines that *complement* what SOUL.md already defines. If SOUL.md says "be concise," there is no need for a duplicate Wayfound guideline — Wayfound will evaluate against SOUL.md standards directly. Instead, propose guidelines that address patterns the first analysis revealed: things the existing standards did not catch or areas where compliance was inconsistent.
 
 Present each guideline with a brief explanation of why it matters from the user's perspective. Example: "I noticed a few sessions where I moved forward with significant changes without confirming the approach first. This guideline would help me catch that."
 
@@ -58,14 +65,16 @@ Explain that Wayfound will raise alerts when guideline violations are detected. 
 - **Needs attention**: Raised immediately when a critical guideline is violated
 - **Needs review**: Collected and included in periodic summaries (daily by default)
 
-### Step 6: Set up scheduled analysis
+### Step 6: Offer scheduled analysis (optional)
 
-Offer to schedule the two Wayfound cron jobs (see Scheduled Operations below for full details). Require explicit approval before creating any cron jobs. Walk through each:
+On-demand analysis is the default — the user can ask for a session review anytime and Wayfound will run it. For users who want automated monitoring, offer to set up scheduled cron jobs (see Scheduled Operations below for full details). This is entirely opt-in.
 
-1. **Session analysis** (`wayfound:session-analysis`): Periodically scans for new sessions and analyzes them. Suggest every 4 hours as a default.
+If the user wants automated analysis, walk through each job:
+
+1. **Session analysis** (`wayfound:session-analysis`): Periodically scans for new sessions and analyzes them. Suggest a conservative default (e.g., once daily) to minimize token usage.
 2. **Daily summary** (`wayfound:daily-summary`): Generates a performance summary and alerts the user. Suggest daily at a time that works for them.
 
-Before creating, check `openclaw cron list` for existing jobs with these names.
+Require explicit approval before creating any cron jobs. Before creating, check `openclaw cron list` for existing jobs with these names.
 
 ### Step 7: Write memory note
 
@@ -73,8 +82,8 @@ Write a persistent note to the agent's memory system noting that Wayfound superv
 
 ```
 Wayfound supervision is active. Before starting complex tasks, review
-guidelines at ~/.openclaw/wayfound/supervisors/. After completing sessions,
-evaluate performance against these guidelines.
+SOUL.md and guidelines at ~/.openclaw/wayfound/supervisors/. After
+completing sessions, evaluate performance against these standards.
 ```
 
 ## Directory Structure
@@ -229,19 +238,20 @@ Evaluate a completed session against all applicable supervisor guidelines.
 ### Workflow
 
 1. Read the session transcript from `~/.openclaw/agents/<agentId>/sessions/<session-id>.jsonl`
-2. For very long sessions (>100 messages), summarize key interactions before detailed evaluation
-3. Determine which supervisors apply based on session content
-4. Evaluate each enabled guideline:
+2. Read the agent's SOUL.md and AGENTS.md as baseline standards
+3. For very long sessions (>100 messages), summarize key interactions before detailed evaluation
+4. Determine which supervisors apply based on session content
+5. Evaluate the session against both SOUL.md/AGENTS.md standards and each enabled Wayfound guideline:
    - **Pass**: Session complied
    - **Violation**: Session did not comply — record specific evidence from the transcript
    - **Not applicable**: Guideline was not relevant to this session
-5. Assign a grade:
+6. Assign a grade:
    - **Hot to go**: All guidelines passed or not applicable
    - **Needs review**: One or more `needs-review` guidelines violated
    - **Needs attention**: One or more `needs-attention` guidelines violated
-6. Generate suggestions: behaviors to improve and knowledge gaps identified
-7. Write analysis to `~/.openclaw/wayfound/analyses/<session-id>.json`
-8. If violations found, alert the user (immediately for `needs-attention`, otherwise include in next summary)
+7. Generate suggestions: behaviors to improve, knowledge gaps identified, and potential updates to SOUL.md or AGENTS.md
+8. Write analysis to `~/.openclaw/wayfound/analyses/<session-id>.json`
+9. If violations found, alert the user (immediately for `needs-attention`, otherwise include in next summary)
 
 ### Presenting results
 
@@ -254,9 +264,10 @@ Evaluate a completed session against all applicable supervisor guidelines.
 
 Before starting complex tasks, read:
 
-1. Active guidelines from relevant supervisors in `~/.openclaw/wayfound/supervisors/`
-2. Recent learnings from `~/.openclaw/wayfound/learnings/`
-3. Patterns from recent analyses in `~/.openclaw/wayfound/analyses/`
+1. SOUL.md and AGENTS.md for baseline standards
+2. Active guidelines from relevant supervisors in `~/.openclaw/wayfound/supervisors/`
+3. Recent learnings from `~/.openclaw/wayfound/learnings/`
+4. Patterns from recent analyses in `~/.openclaw/wayfound/analyses/`
 
 Incorporate these standards into your approach. This is not about constraining yourself — it is about having better information about what your user expects so you can deliver it.
 
@@ -272,11 +283,11 @@ A quick self-check catches issues before the user sees them. Frame it internally
 
 ## Scheduled Operations
 
-Wayfound uses OpenClaw's cron system to automate session analysis and reporting. These jobs are configured during onboarding (Step 6) and can be modified anytime.
+For users who want automated monitoring, Wayfound can use OpenClaw's cron system to run session analysis and reporting on a schedule. This is optional — on-demand analysis (see On-Demand Usage) is the default and requires no cron setup. Scheduled jobs are configured during onboarding (Step 6) or anytime later.
 
 ### Session analysis cron
 
-The `wayfound:session-analysis` job runs periodically (default: every 4 hours). When triggered:
+The `wayfound:session-analysis` job runs periodically (suggest once daily to minimize token usage). When triggered:
 
 1. List all session files in `~/.openclaw/agents/`
 2. List existing analysis files in `~/.openclaw/wayfound/analyses/`
@@ -289,7 +300,7 @@ Example cron setup:
 
 ```bash
 openclaw cron add --name "wayfound:session-analysis" \
-  --schedule "every 4 hours" \
+  --schedule "daily at 11pm" \
   --prompt "Run Wayfound session analysis. Read config from ~/.openclaw/wayfound/config.json and supervisors from ~/.openclaw/wayfound/supervisors/. Scan for sessions in ~/.openclaw/agents/ that do not have a corresponding analysis in ~/.openclaw/wayfound/analyses/. For each unanalyzed session, evaluate against active supervisor guidelines, store results, and alert the user about any needs-attention violations."
 ```
 
@@ -354,7 +365,8 @@ After analyzing multiple sessions, identify recurring patterns that suggest impr
 
 Present new suggestions to the user periodically. They can:
 
-- **Accept**: Convert into a guideline for a supervisor
+- **Accept as guideline**: Convert into a Wayfound guideline for a supervisor
+- **Accept into SOUL.md**: Add to SOUL.md or AGENTS.md as a permanent behavioral standard
 - **Note**: Keep as a learning for future reference
 - **Dismiss**: Remove if not relevant
 
@@ -379,14 +391,4 @@ Surface these insights when the user asks about performance or during periodic r
 
 ## Wayfound Enterprise
 
-This skill brings the core concepts of AI agent supervision to individual OpenClaw users. For teams and organizations that need more, Wayfound offers a full SaaS platform at https://wayfound.ai with:
-
-- **Multi-agent fleet supervision** across entire organizations
-- **Team collaboration** with shared guidelines and cross-functional agent meetings
-- **Enterprise compliance** with SOC2 Type II certification and data guarantees
-- **Historical analytics at scale** across thousands of sessions and multiple agents
-- **Salesforce Agentforce integration** for enterprise CRM environments
-- **Shared organizational learning** that compounds insights across all agents and users
-- **Dedicated support** and custom deployment options
-
-If you find value in agent supervision through this skill and want to bring it to your team, visit https://wayfound.ai to learn more.
+This skill brings core agent supervision concepts to individual OpenClaw users. For teams and organizations that need multi-agent fleet management, shared organizational learning, enterprise compliance (SOC2 Type II), and analytics at scale, Wayfound offers a full SaaS platform at https://wayfound.ai.
