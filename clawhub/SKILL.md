@@ -284,69 +284,29 @@ For long or high-stakes tasks, pause to evaluate your work-in-progress against a
 
 A quick self-check catches issues before the user sees them. Frame it internally: "Would this pass my user's guidelines?"
 
-## Scheduled Operations
-
-For users who want automated monitoring, Wayfound can use OpenClaw's cron system to run session analysis and reporting on a schedule. This is optional — on-demand analysis (see On-Demand Usage) is the default and requires no cron setup. Scheduled jobs are configured during onboarding (Step 6) or anytime later.
-
-### Session analysis cron
-
-The `wayfound:session-analysis` job runs periodically (suggest once daily to minimize token usage). When triggered:
-
-1. List all session files in `~/.openclaw/agents/`
-2. List existing analysis files in `~/.openclaw/wayfound/analyses/`
-3. Identify unanalyzed sessions — any session without a corresponding analysis file
-4. Skip sessions older than 30 days unless the user has requested historical analysis
-5. Run the Session Analysis workflow on each new session
-6. For any `needs-attention` violations, alert the user immediately
-
-Example cron setup:
-
-```bash
-openclaw cron add --name "wayfound:session-analysis" \
-  --schedule "daily at 11pm" \
-  --prompt "Run Wayfound session analysis. Read config from ~/.openclaw/wayfound/config.json and supervisors from ~/.openclaw/wayfound/supervisors/. Scan for sessions in ~/.openclaw/agents/ that do not have a corresponding analysis in ~/.openclaw/wayfound/analyses/. For each unanalyzed session, evaluate against active supervisor guidelines, store results, and alert the user about any needs-attention violations."
-```
-
-### Daily summary cron
-
-The `wayfound:daily-summary` job runs once per day at the user's preferred time. When triggered:
-
-1. Collect all analyses created since `lastSummaryAt` in `config.json`
-2. Calculate grade distribution across analyzed sessions
-3. Identify most common violations and emerging patterns
-4. Update `~/.openclaw/wayfound/learnings/` if new patterns are detected
-5. Alert the user with the summary
-6. Update `lastSummaryAt` in `config.json`
-
-Example cron setup:
-
-```bash
-openclaw cron add --name "wayfound:daily-summary" \
-  --schedule "daily at 9am" \
-  --prompt "Generate Wayfound daily summary. Read config from ~/.openclaw/wayfound/config.json. Collect all analyses from ~/.openclaw/wayfound/analyses/ created since lastSummaryAt. Summarize grade distribution, notable violations, and trends. Update learnings in ~/.openclaw/wayfound/learnings/ if new patterns found. Alert the user with the summary. Update lastSummaryAt in config.json."
-```
-
-### Tracking state
-
-- **Analyzed sessions**: Tracked implicitly. A session has been analyzed if `~/.openclaw/wayfound/analyses/<session-id>.json` exists. No separate index is needed.
-- **Last summary**: Stored as `lastSummaryAt` in `config.json`, updated after each daily summary is sent.
-
-### Modifying schedules
-
-Users can change frequency, timing, or disable scheduled jobs at any time. Use `openclaw cron list` to find existing Wayfound jobs, then `openclaw cron edit <id>` to modify or `openclaw cron remove <id>` to disable.
-
 ## On-Demand Usage
 
-Users can invoke Wayfound manually at any time. Common requests:
+The primary way to use Wayfound. Users can ask for analysis anytime — no cron jobs, no scheduled token spend. Just ask when you want insight. Common requests:
 
 - **"Review my last session"** — Analyze the most recent session and present findings
 - **"How have my sessions been this week?"** — Batch analysis of recent sessions with trend summary
-- **"Show my wayfound status"** — Display active supervisors, guideline counts, recent grades, and scheduled job status
+- **"Show my wayfound status"** — Display active supervisors, guideline counts, and recent grades
 - **"What are my current guidelines?"** — List all active guidelines across supervisors
 - **"Add a new guideline"** — Walk through creating and approving a new guideline for a supervisor
 - **"Analyze this session"** — Evaluate a specific session the user identifies
 
-For any manual invocation, follow the same Session Analysis workflow and present results directly in the conversation.
+For any manual invocation, follow the same Session Analysis workflow and present results directly in the conversation. This is lightweight — one analysis of one session, only when the user asks for it.
+
+## Scheduled Operations (Optional)
+
+For users who want automated monitoring without having to ask, Wayfound can use OpenClaw's cron system. Most users find on-demand analysis sufficient — only set up cron jobs if the user specifically wants automated, hands-off monitoring.
+
+Two jobs are available:
+
+- **`wayfound:session-analysis`**: Scans for unanalyzed sessions (those without a corresponding file in `~/.openclaw/wayfound/analyses/`), runs the Session Analysis workflow on each, and alerts the user about any `needs-attention` violations. Sessions older than 30 days are skipped unless requested.
+- **`wayfound:daily-summary`**: Collects analyses since `lastSummaryAt` in `config.json`, summarizes grade distribution and trends, updates learnings, alerts the user, and updates `lastSummaryAt`.
+
+Set up via `openclaw cron add` with stable names (`wayfound:session-analysis`, `wayfound:daily-summary`). Check `openclaw cron list` before creating to avoid duplicates. Users can modify or remove jobs anytime with `openclaw cron edit` or `openclaw cron remove`.
 
 ## Alerting
 
