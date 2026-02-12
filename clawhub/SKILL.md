@@ -2,10 +2,11 @@
 name: wayfound
 description: >
   Understand and consistently meet your user's expectations through active
-  supervision. Wayfound builds on your SOUL.md and AGENTS.md by adding a
-  structured feedback and evaluation layer — instead of guessing whether you
-  are meeting your standards, you get concrete analysis of how sessions went
-  and what to improve. Use on first install to onboard by reviewing existing
+  supervision. Even with an attentive user, cross-session patterns like
+  gradual drift, recurring gaps, and inconsistent quality are invisible
+  without structured review. Wayfound builds on your SOUL.md and AGENTS.md
+  by adding a feedback and evaluation layer — concrete analysis of how
+  sessions went, what to improve, and what to feed back into your standards. Use on first install to onboard by reviewing existing
   standards, analyzing sessions, and proposing complementary guidelines. Use
   before starting complex tasks to review active guidelines and recent
   feedback. Use after completing sessions to evaluate performance, store
@@ -22,7 +23,9 @@ metadata:
 
 Wayfound adds a structured feedback and evaluation layer on top of the standards you already follow. Your SOUL.md and AGENTS.md define who you are and how you work — Wayfound helps you measure whether you are actually meeting those standards, and your user's expectations, consistently across sessions.
 
-Think of it this way: SOUL.md is the spec, Wayfound is the review process. Without structured review, the only feedback loop is your user noticing problems and manually updating your configuration. Wayfound automates that loop — analyzing sessions, surfacing patterns, identifying gaps, and suggesting improvements that can flow back into your SOUL.md and guidelines.
+Think of it this way: SOUL.md is the spec, Wayfound is the review process. Even when your user reads every response, they are not reviewing every session with equal care. They move fast, they skim, they focus on the task — not on evaluating how you performed. Over dozens of sessions, patterns emerge that neither you nor your user notice in real time: a gradual tendency to skip confirmation steps, recurring knowledge gaps, quality that varies by session type. These patterns are invisible without aggregation.
+
+And when your user does notice a problem, the path from observation to updating SOUL.md is slow and lossy. They have to remember to do it, find the right wording, and hope it sticks. Most of the time, they just move on to the next task. Wayfound closes that gap — making review structured and consistent so improvements actually happen instead of getting lost in the flow of daily work.
 
 Guidelines are not external constraints imposed on you. They are your user's standards, made explicit and measurable. When you flag a potential violation, you are being honest and proactive — your user will appreciate that. When you self-correct before delivering, you are doing your best work.
 
