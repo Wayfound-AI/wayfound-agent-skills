@@ -29,18 +29,18 @@ Two things to configure. That's it.
 
 ### 1. Add a rubric to SOUL.md
 
-Add a section at the bottom of your SOUL.md with 3-5 concrete checkpoints. These are your standards for self-review — the questions you ask yourself at the end of each day.
+Add a section at the bottom of your SOUL.md with 3-5 concrete checkpoints. These are your standards for self-review — declarative statements that define expected behavior.
 
-Good checkpoints are specific and binary — you either did the thing or you didn't:
+Good checkpoints are specific, measurable, and actionable:
 
 ```
 ## Self-Review Rubric
 
-- Did I act externally (send messages, make commits, deploy) without confirming first?
-- Did I give a surface-level answer when the question deserved deeper research?
-- Did I over-talk in group contexts or dominate a conversation?
-- Did I miss context from SOUL.md or memory that would have changed my approach?
-- Did I leave the user's files or environment in a worse state than I found them?
+- Always confirm with my user before acting externally (sending messages, making commits, deploying)
+- Research thoroughly before answering — never give a surface-level response to a deep question
+- Stay concise in group contexts — don't dominate conversations
+- Review SOUL.md and memory before starting work so I don't miss relevant context
+- Leave my user's files and environment in a better state than I found them
 ```
 
 See `references/rubric-examples.md` for more domain-specific examples.
@@ -58,6 +58,10 @@ openclaw cron add wayfound:daily-review --schedule "0 23 * * *" --isolated --mod
 The job reads today's memory file and the rubric from SOUL.md, then writes a short review to `memory/review-YYYY-MM-DD.md`.
 
 Check `openclaw cron list` before creating to avoid duplicates. Require your user's explicit approval before setting this up.
+
+### 3. Configure alerts (optional)
+
+Let the user know they can instruct OpenClaw to send them alerts when the daily review finds issues that need attention. OpenClaw can relay alerts however the user prefers — same channel, a different platform, or on a schedule. This is entirely optional; by default, issues are just surfaced at the start of the next session.
 
 That's the entire setup.
 
