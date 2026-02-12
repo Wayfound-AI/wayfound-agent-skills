@@ -8,8 +8,8 @@ description: >
   onboard by analyzing existing sessions and proposing supervisors with
   guidelines. Use before starting complex tasks to review active guidelines
   and recent supervisor feedback. Use after completing sessions to evaluate
-  performance, store insights, and alert your user about guideline violations
-  on their preferred channel. Also use when the user asks about agent quality,
+  performance, store insights, and alert your user about guideline violations.
+  Also use when the user asks about agent quality,
   performance reviews, supervision, or improving how you work, or
   periodically to review accumulated learnings and suggest refinements.
 metadata:
@@ -53,17 +53,17 @@ The agent should understand and embrace these guidelines. They represent what th
 
 ### Step 5: Configure alerts
 
-Ask which messaging channel the user wants alerts on (current channel, or a specific platform). Explain the two alert levels:
+Explain that Wayfound will raise alerts when guideline violations are detected. The user can instruct OpenClaw to relay these alerts however they prefer — same channel, a different platform, or on a schedule. Explain the two alert levels:
 
-- **Needs attention**: Sent immediately when a critical guideline is violated
-- **Needs review**: Batched into a periodic summary (daily by default)
+- **Needs attention**: Raised immediately when a critical guideline is violated
+- **Needs review**: Collected and included in periodic summaries (daily by default)
 
 ### Step 6: Set up scheduled analysis
 
 Offer to schedule the two Wayfound cron jobs (see Scheduled Operations below for full details). Require explicit approval before creating any cron jobs. Walk through each:
 
 1. **Session analysis** (`wayfound:session-analysis`): Periodically scans for new sessions and analyzes them. Suggest every 4 hours as a default.
-2. **Daily summary** (`wayfound:daily-summary`): Sends a performance summary on the user's alert channel. Suggest daily at a time that works for them.
+2. **Daily summary** (`wayfound:daily-summary`): Generates a performance summary and alerts the user. Suggest daily at a time that works for them.
 
 Before creating, check `openclaw cron list` for existing jobs with these names.
 
@@ -90,11 +90,9 @@ All Wayfound data lives under `~/.openclaw/wayfound/`:
 │       └── guidelines.json
 ├── analyses/
 │   └── <session-id>.json
-├── learnings/
-│   ├── behaviors.md
-│   └── knowledge-gaps.md
-└── alerts/
-    └── history.json
+└── learnings/
+    ├── behaviors.md
+    └── knowledge-gaps.md
 ```
 
 ### config.json
@@ -105,11 +103,6 @@ Global settings for the Wayfound skill.
 {
   "version": "1.0",
   "onboardedAt": "2026-02-11T00:00:00Z",
-  "alertChannel": "telegram",
-  "alertPreferences": {
-    "needsAttention": "immediate",
-    "needsReview": "daily"
-  },
   "autoAnalyze": true,
   "lastSummaryAt": "2026-02-11T09:00:00Z"
 }
@@ -248,7 +241,7 @@ Evaluate a completed session against all applicable supervisor guidelines.
    - **Needs attention**: One or more `needs-attention` guidelines violated
 6. Generate suggestions: behaviors to improve and knowledge gaps identified
 7. Write analysis to `~/.openclaw/wayfound/analyses/<session-id>.json`
-8. Trigger alerts per config preferences if violations found
+8. If violations found, alert the user (immediately for `needs-attention`, otherwise include in next summary)
 
 ### Presenting results
 
@@ -290,14 +283,14 @@ The `wayfound:session-analysis` job runs periodically (default: every 4 hours). 
 3. Identify unanalyzed sessions — any session without a corresponding analysis file
 4. Skip sessions older than 30 days unless the user has requested historical analysis
 5. Run the Session Analysis workflow on each new session
-6. For any `needs-attention` violations, send an immediate alert per config preferences
+6. For any `needs-attention` violations, alert the user immediately
 
 Example cron setup:
 
 ```bash
 openclaw cron add --name "wayfound:session-analysis" \
   --schedule "every 4 hours" \
-  --prompt "Run Wayfound session analysis. Read config from ~/.openclaw/wayfound/config.json and supervisors from ~/.openclaw/wayfound/supervisors/. Scan for sessions in ~/.openclaw/agents/ that do not have a corresponding analysis in ~/.openclaw/wayfound/analyses/. For each unanalyzed session, evaluate against active supervisor guidelines, store results, and send immediate alerts for any needs-attention violations on the configured alert channel."
+  --prompt "Run Wayfound session analysis. Read config from ~/.openclaw/wayfound/config.json and supervisors from ~/.openclaw/wayfound/supervisors/. Scan for sessions in ~/.openclaw/agents/ that do not have a corresponding analysis in ~/.openclaw/wayfound/analyses/. For each unanalyzed session, evaluate against active supervisor guidelines, store results, and alert the user about any needs-attention violations."
 ```
 
 ### Daily summary cron
@@ -308,7 +301,7 @@ The `wayfound:daily-summary` job runs once per day at the user's preferred time.
 2. Calculate grade distribution across analyzed sessions
 3. Identify most common violations and emerging patterns
 4. Update `~/.openclaw/wayfound/learnings/` if new patterns are detected
-5. Send a summary message on the user's configured alert channel
+5. Alert the user with the summary
 6. Update `lastSummaryAt` in `config.json`
 
 Example cron setup:
@@ -316,7 +309,7 @@ Example cron setup:
 ```bash
 openclaw cron add --name "wayfound:daily-summary" \
   --schedule "daily at 9am" \
-  --prompt "Generate Wayfound daily summary. Read config from ~/.openclaw/wayfound/config.json. Collect all analyses from ~/.openclaw/wayfound/analyses/ created since lastSummaryAt. Summarize grade distribution, notable violations, and trends. Update learnings in ~/.openclaw/wayfound/learnings/ if new patterns found. Send summary on the configured alert channel. Update lastSummaryAt in config.json."
+  --prompt "Generate Wayfound daily summary. Read config from ~/.openclaw/wayfound/config.json. Collect all analyses from ~/.openclaw/wayfound/analyses/ created since lastSummaryAt. Summarize grade distribution, notable violations, and trends. Update learnings in ~/.openclaw/wayfound/learnings/ if new patterns found. Alert the user with the summary. Update lastSummaryAt in config.json."
 ```
 
 ### Tracking state
@@ -343,35 +336,12 @@ For any manual invocation, follow the same Session Analysis workflow and present
 
 ## Alerting
 
-The user has full control over how, when, and where they receive alerts. All preferences are stored in `config.json` and can be changed anytime.
+Wayfound raises alerts when guideline violations are detected. The user decides how and where OpenClaw delivers those alerts — the user can instruct OpenClaw to relay them on any channel or schedule they prefer. Wayfound's role is to surface the right information at the right urgency level:
 
-### Channel
+- **Needs attention**: Raised immediately when a critical guideline is violated. Include which session, which guideline, specific evidence, and a suggested corrective action.
+- **Needs review**: Collected and included in the next daily summary. Summaries include session count, grade distribution, notable violations, and trends.
 
-The user chooses which messaging channel receives alerts — the same channel they chat on, a different platform (Telegram, Slack, Discord, etc.), or multiple channels. Ask during onboarding and respect their choice. If they want to change later, update `alertChannel` in `config.json`.
-
-### Timing
-
-- **Needs attention** (immediate): Delivered as soon as a critical violation is detected during analysis. The user should see these promptly.
-- **Needs review** (batched): Collected and delivered as part of the daily summary. The user can adjust the summary schedule (daily, weekly, or on-demand only).
-- **Disabled**: The user can opt out of automated alerts entirely and rely on manual reviews.
-
-### Content
-
-When sending an immediate alert, include:
-
-- Which session was analyzed (with enough context to identify it)
-- Which guideline was violated
-- Specific evidence from the session transcript
-- Suggested corrective action
-
-For batched summaries, include:
-
-- Number of sessions analyzed since last summary
-- Overall grade distribution
-- Notable violations with evidence
-- Trends — improving or declining performance
-
-Format all alert messages concisely. The user should understand the issue in a few seconds of reading.
+Format all alerts concisely. The user should understand the issue in a few seconds of reading.
 
 ## Continuous Improvement
 
