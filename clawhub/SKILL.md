@@ -91,7 +91,7 @@ completing sessions, evaluate performance against these standards.
 
 ## Directory Structure
 
-All Wayfound data lives under `~/.openclaw/wayfound/`:
+All Wayfound data lives under `~/.openclaw/wayfound/`. After onboarding, the initial footprint is just `config.json` and one supervisor folder with two small files. The `analyses/` and `learnings/` directories grow organically as you use it — nothing is created until there is something to store.
 
 ```
 ~/.openclaw/wayfound/
@@ -295,7 +295,7 @@ The primary way to use Wayfound. Users can ask for analysis anytime — no cron 
 - **"Add a new guideline"** — Walk through creating and approving a new guideline for a supervisor
 - **"Analyze this session"** — Evaluate a specific session the user identifies
 
-For any manual invocation, follow the same Session Analysis workflow and present results directly in the conversation. This is lightweight — one analysis of one session, only when the user asks for it.
+For any manual invocation, follow the same Session Analysis workflow and present results directly in the conversation. Token cost is minimal — analyzing a single session is roughly one additional LLM call, comparable to a normal conversation turn. There is no background processing or expensive infrastructure. You read the transcript, evaluate against a few guidelines, and report back.
 
 ## Scheduled Operations (Optional)
 
