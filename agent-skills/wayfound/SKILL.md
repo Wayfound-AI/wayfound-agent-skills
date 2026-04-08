@@ -59,3 +59,95 @@ Each message in the array:
 | `description` | string | No | Additional context about the event |
 
 The messages array has a **750 KB size limit**.
+
+## Python SDK
+
+Install:
+
+```bash
+pip install wayfound
+```
+
+Requires Python 3.8+.
+
+### Create a session
+
+```python
+from wayfound import Session
+
+session = Session(
+    wayfound_api_key="your-api-key",
+    agent_id="your-agent-id"
+)
+
+messages = [
+    {
+        "timestamp": "2025-01-15T10:00:00Z",
+        "event_type": "assistant_message",
+        "attributes": {"content": "Hello! How can I help?"}
+    },
+    {
+        "timestamp": "2025-01-15T10:00:05Z",
+        "event_type": "user_message",
+        "attributes": {"content": "What's the status of Project Alpha?"}
+    },
+    {
+        "timestamp": "2025-01-15T10:00:08Z",
+        "event_type": "assistant_message",
+        "attributes": {"content": "Project Alpha is on track for delivery next Friday."}
+    }
+]
+
+result = session.create(messages=messages)
+```
+
+If `WAYFOUND_API_KEY` and `WAYFOUND_AGENT_ID` are set as environment variables, the constructor needs no arguments:
+
+```python
+session = Session()
+```
+
+### Synchronous mode
+
+By default, `create()` returns immediately and analysis runs in the background. Set `is_async=False` to wait for analysis results:
+
+```python
+result = session.create(messages=messages, is_async=False)
+
+if "compliance" in result:
+    violations = [item for item in result["compliance"] if not item["result"]["compliant"]]
+    if violations:
+        print(f"Found {len(violations)} guideline violations")
+```
+
+### Append to a session
+
+Add more messages to an existing session:
+
+```python
+additional_messages = [
+    {
+        "timestamp": "2025-01-15T10:05:00Z",
+        "event_type": "user_message",
+        "attributes": {"content": "Can you also check Project Beta?"}
+    }
+]
+
+session.append_to_session(additional_messages)
+```
+
+### Visitor and account tracking
+
+Track who is interacting with the agent:
+
+```python
+session = Session(
+    wayfound_api_key="your-api-key",
+    agent_id="your-agent-id",
+    visitor_id="user-123",
+    visitor_display_name="Jane Smith",
+    account_id="acct-456",
+    account_display_name="Acme Corp",
+    metadata={"source": "web", "environment": "production"}
+)
+```
