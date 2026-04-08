@@ -53,12 +53,97 @@ Each message in the array:
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
 | `timestamp` | string | Yes | ISO 8601 datetime of when the message occurred |
-| `event_type` | string | Yes | `user_message`, `assistant_message`, `tool_call`, or custom types |
+| `event_type` | string | Yes | One of the 14 supported event types listed below |
 | `attributes` | object | No | Event-specific data. Use `content` for message text |
 | `label` | string | No | Classification label for the event |
 | `description` | string | No | Additional context about the event |
 
 The messages array has a **750 KB size limit**.
+
+### Event Types
+
+There are 14 supported event types. The AI Supervisor reasons about all of them when analyzing sessions.
+
+| Event Type | Purpose | Key Attributes |
+|------------|---------|----------------|
+| `user_message` | User's input | `content` |
+| `assistant_message` | Agent's response | `content`, `model_name`, `tokens_total`, `latency_ms` |
+| `system_message` | Background system actions | `content` |
+| `developer_message` | Internal dev/debug logs | `content` |
+| `structured_message` | Structured options presented to user | `options` (array of `{title, value}`) |
+| `reasoning_step` | Agent's internal reasoning | `thought` |
+| `tool_call` | External tool/API invocation | `tool_name`, `tool_input`, `tool_output`, `success`, `latency_ms` |
+| `agent_call` | Delegation to another agent | `external_id`, `input` |
+| `user_feedback` | User rating or reaction | `feedback_type` (`thumbs_up_down` or `stars`), `rating` |
+| `button_click` | User clicked a UI button | `button_id` |
+| `link_click` | User clicked a link | `url` |
+| `agent_handoff` | Transfer to human agent | `reason` |
+| `human_review` | Supervisor/human follow-up | `approver_id`, `status` |
+| `custom_event` | Any domain-specific event | `event_name`, `details` |
+
+### Event examples
+
+**Tool call:**
+
+```json
+{
+  "timestamp": "2025-01-15T10:00:03Z",
+  "event_type": "tool_call",
+  "label": "Tool Call: PMService.getProjectData",
+  "description": "Fetched summary for Project Alpha",
+  "attributes": {
+    "tool_name": "PMService",
+    "tool_input": { "projectId": "Alpha" },
+    "tool_output": { "status": "On Track", "completion": 80 },
+    "success": true,
+    "latency_ms": 95
+  }
+}
+```
+
+**Reasoning step:**
+
+```json
+{
+  "timestamp": "2025-01-15T10:00:01Z",
+  "event_type": "reasoning_step",
+  "label": "Reasoning Step",
+  "description": "Determine which service to call first",
+  "attributes": {
+    "thought": "Fetch high-level project data, then drill into trends."
+  }
+}
+```
+
+**Agent call:**
+
+```json
+{
+  "timestamp": "2025-01-15T10:00:09Z",
+  "event_type": "agent_call",
+  "label": "Agent Call: RiskAgent",
+  "description": "Requested project risk evaluation",
+  "attributes": {
+    "external_id": "agent-42",
+    "input": { "projectId": "Alpha" }
+  }
+}
+```
+
+**User feedback:**
+
+```json
+{
+  "timestamp": "2025-01-15T10:05:05Z",
+  "event_type": "user_feedback",
+  "label": "User Feedback",
+  "description": "User rated the response",
+  "attributes": {
+    "feedback_type": "thumbs_up_down",
+    "rating": "thumbs_up"
+  }
+}
+```
 
 ## Python SDK
 
