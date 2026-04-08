@@ -1,0 +1,13 @@
+{
+  "name": "wayfound",
+  "displayName": "Wayfound",
+  "description": "Integrate AI agents with Wayfound's supervision and observability platform",
+  "version": "1.0.0",
+  "author": {
+    "name": "Wayfound AI"
+  },
+  "keywords": ["wayfound", "supervision", "observability", "agent"],
+  "homepage": "https://wayfound.ai",
+  "repository": "https://github.com/Wayfound-AI/wayfound-agent-skills",
+  "license": "MIT"
+}

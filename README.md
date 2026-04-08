@@ -18,9 +18,16 @@ This repo is a Claude Code plugin marketplace. To install:
 
 Once installed, the skill activates automatically when you ask your agent to integrate Wayfound into a project.
 
+### Cursor
+
+This repo is also a Cursor plugin marketplace. To install:
+
+1. Open the Cursor Marketplace and search for **wayfound**, or add the marketplace manually from this repo
+2. Install the **wayfound** plugin
+
 ### Other Agents
 
-Any agent that supports the [agentskills.io](https://agentskills.io) format can use this skill. Check your agent's documentation for how it discovers and loads skills — each agent has its own mechanism. The skill file is at [`agent-skills/wayfound/skills/wayfound/SKILL.md`](agent-skills/wayfound/skills/wayfound/SKILL.md).
+Any agent that supports the [agentskills.io](https://agentskills.io) format can use this skill — including Codex, Gemini CLI, Roo Code, and others. Check your agent's documentation for how it discovers and loads skills. The skill file is at [`agent-skills/wayfound/skills/wayfound/SKILL.md`](agent-skills/wayfound/skills/wayfound/SKILL.md).
 
 ## Skills
 

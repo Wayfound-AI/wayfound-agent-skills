@@ -1,0 +1,9 @@
+{
+  "name": "wayfound-skills",
+  "owner": "Wayfound AI",
+  "metadata": {
+    "description": "Agent skills for Wayfound supervision and observability",
+    "homepage": "https://wayfound.ai",
+    "repository": "https://github.com/Wayfound-AI/wayfound-agent-skills"
+  }
+}
