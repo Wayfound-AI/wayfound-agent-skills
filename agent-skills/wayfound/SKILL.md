@@ -234,3 +234,70 @@ const session = new Session({
   metadata: { source: "web", environment: "production" }
 });
 ```
+
+## REST API
+
+For languages without an SDK, use the REST API directly.
+
+### Create a session
+
+```bash
+curl -X POST https://app.wayfound.ai/api/v2/sessions \
+  -H "Authorization: Bearer $WAYFOUND_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "agentId": "your-agent-id",
+    "messages": [
+      {
+        "timestamp": "2025-01-15T10:00:00Z",
+        "event_type": "assistant_message",
+        "attributes": {"content": "Hello! How can I help?"}
+      },
+      {
+        "timestamp": "2025-01-15T10:00:05Z",
+        "event_type": "user_message",
+        "attributes": {"content": "What is the status of Project Alpha?"}
+      }
+    ]
+  }'
+```
+
+Response:
+
+```json
+{
+  "id": "9f71c6ef-d423-4757-b39f-7118fe87adf6",
+  "createdAt": "2025-01-15T10:01:00.000Z"
+}
+```
+
+### Append to a session
+
+```bash
+curl -X PUT https://app.wayfound.ai/api/v2/sessions/SESSION_ID \
+  -H "Authorization: Bearer $WAYFOUND_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "messages": [
+      {
+        "timestamp": "2025-01-15T10:05:00Z",
+        "event_type": "user_message",
+        "attributes": {"content": "Follow-up question here"}
+      }
+    ]
+  }'
+```
+
+### Optional parameters
+
+Include these in the create request body as needed:
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `async` | boolean | Set to `false` to block until analysis completes (default: `true`) |
+| `visitorId` | string | Unique identifier for the end user |
+| `visitorDisplayName` | string | Display name for the end user |
+| `accountId` | string | Unique identifier for the user's account/org |
+| `accountDisplayName` | string | Display name for the account |
+| `applicationId` | string | Groups sessions by application in multi-agent setups |
+| `metadata` | object | Arbitrary key-value pairs attached to the session |
