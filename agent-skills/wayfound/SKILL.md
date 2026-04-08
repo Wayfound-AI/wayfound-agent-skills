@@ -301,3 +301,58 @@ Include these in the create request body as needed:
 | `accountDisplayName` | string | Display name for the account |
 | `applicationId` | string | Groups sessions by application in multi-agent setups |
 | `metadata` | object | Arbitrary key-value pairs attached to the session |
+
+## Key Concepts
+
+**Async vs sync processing:** By default, session creation returns immediately with a session ID while analysis runs in the background. Set `async: false` (REST/JavaScript) or `is_async=False` (Python) to wait for analysis results including compliance checks.
+
+**Appending messages:** Use the session ID from the create response to append additional messages later. This is useful for long-running conversations where you want to send messages incrementally rather than waiting for the full conversation to complete.
+
+**Visitor and account tracking:** Attach user identity (`visitor_id`, `visitor_display_name`) and organization identity (`account_id`, `account_display_name`) to sessions. These appear in Wayfound's Visitors tab for tracking interactions across sessions.
+
+**Session metadata:** Attach arbitrary key-value pairs to sessions for filtering and analysis in the Wayfound dashboard (e.g., `{"source": "web", "environment": "production", "model": "gpt-4"}`).
+
+**Application ID:** In multi-agent architectures, use `application_id` to group sessions by application. This links sessions to a specific application context in Wayfound.
+
+**Test mode:** Use `POST /api/v2/sessions/test/completed` (same request body as the create endpoint) to submit test sessions during development. Test sessions are analyzed but flagged separately in the dashboard.
+
+**Message size limit:** The messages array is limited to **750 KB** per request. For very long conversations, send messages incrementally using the append endpoint.
+
+## Common Patterns
+
+### Sending a completed conversation
+
+The simplest integration — collect all messages during the conversation, then send them to Wayfound after the session ends:
+
+```python
+from wayfound import Session
+
+def run_agent_session(user_input):
+    messages = []
+    # ... your agent conversation loop ...
+    # Each turn, append to messages with timestamp, event_type, and attributes
+
+    # After the conversation ends, send to Wayfound
+    session = Session()
+    session.create(messages=messages)
+```
+
+### Streaming messages during a conversation
+
+For long-running sessions, create the session with the first batch of messages, then append as the conversation continues:
+
+```python
+from wayfound import Session
+
+session = Session()
+
+# After the first exchange
+result = session.create(messages=initial_messages)
+# session.session_id is now set from the response
+
+# As the conversation continues
+session.append_to_session(new_messages)
+
+# After another exchange
+session.append_to_session(more_messages)
+```
