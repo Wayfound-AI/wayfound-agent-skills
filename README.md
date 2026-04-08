@@ -8,12 +8,13 @@ These skills teach AI coding agents how to integrate with Wayfound, so when a de
 
 ### Claude Code
 
-This repo is a Claude Code plugin marketplace. Install with two commands:
+This repo is a Claude Code plugin marketplace. To install:
 
-```
-/plugin marketplace add Wayfound-AI/wayfound-agent-skills
-/plugin install wayfound@wayfound-skills
-```
+1. Add the marketplace:
+   ```
+   /plugin marketplace add Wayfound-AI/wayfound-agent-skills
+   ```
+2. Open the plugin manager with `/plugin`, select **wayfound-skills**, browse plugins, and install **wayfound**
 
 Once installed, the skill activates automatically when you ask your agent to integrate Wayfound into a project.
 
