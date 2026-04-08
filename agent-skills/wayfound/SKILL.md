@@ -151,3 +151,86 @@ session = Session(
     metadata={"source": "web", "environment": "production"}
 )
 ```
+
+## JavaScript SDK
+
+Install:
+
+```bash
+npm install wayfound
+```
+
+### Create a session
+
+```javascript
+import { Session } from "wayfound";
+
+const session = new Session({
+  wayfoundApiKey: "your-api-key",
+  agentId: "your-agent-id"
+});
+
+const messages = [
+  {
+    timestamp: "2025-01-15T10:00:00Z",
+    event_type: "assistant_message",
+    attributes: { content: "Hello! How can I help?" }
+  },
+  {
+    timestamp: "2025-01-15T10:00:05Z",
+    event_type: "user_message",
+    attributes: { content: "What's the status of Project Alpha?" }
+  },
+  {
+    timestamp: "2025-01-15T10:00:08Z",
+    event_type: "assistant_message",
+    attributes: { content: "Project Alpha is on track for delivery next Friday." }
+  }
+];
+
+const result = await session.create({ messages });
+```
+
+If `WAYFOUND_API_KEY` and `WAYFOUND_AGENT_ID` are set as environment variables, the constructor needs no arguments:
+
+```javascript
+const session = new Session({});
+```
+
+### Synchronous mode
+
+Set `async: false` to wait for analysis results:
+
+```javascript
+const result = await session.create({ messages, async: false });
+```
+
+### Append to a session
+
+Add more messages to an existing session:
+
+```javascript
+const additionalMessages = [
+  {
+    timestamp: "2025-01-15T10:05:00Z",
+    event_type: "user_message",
+    attributes: { content: "Can you also check Project Beta?" }
+  }
+];
+
+await session.appendToSession({ messages: additionalMessages });
+```
+
+### Visitor, account, and metadata tracking
+
+```javascript
+const session = new Session({
+  wayfoundApiKey: "your-api-key",
+  agentId: "your-agent-id",
+  visitorId: "user-123",
+  visitorDisplayName: "Jane Smith",
+  accountId: "acct-456",
+  accountDisplayName: "Acme Corp",
+  metadata: { source: "web", environment: "production" }
+});
+```
