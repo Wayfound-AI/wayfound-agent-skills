@@ -20,10 +20,12 @@ Once installed, the skill activates automatically when you ask your agent to int
 
 ### Cursor
 
-This repo is also a Cursor plugin marketplace. To install:
+This repo is a Cursor team marketplace. To install:
 
-1. Open the Cursor Marketplace and search for **wayfound**, or add the marketplace manually from this repo
-2. Install the **wayfound** plugin
+1. Go to **Dashboard > Settings > Plugins**
+2. Under **Team Marketplaces**, click **Import**
+3. Paste the repo URL: `https://github.com/Wayfound-AI/wayfound-agent-skills`
+4. Review and install the **wayfound** plugin
 
 ### Other Agents
 
