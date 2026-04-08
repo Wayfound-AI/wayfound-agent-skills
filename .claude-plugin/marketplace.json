@@ -1,0 +1,17 @@
+{
+  "name": "wayfound-skills",
+  "owner": {
+    "name": "Wayfound AI"
+  },
+  "metadata": {
+    "description": "Official Wayfound agent skills for AI agent supervision and observability"
+  },
+  "plugins": [
+    {
+      "name": "wayfound",
+      "source": "./agent-skills/wayfound",
+      "description": "Integrate AI agents with Wayfound's supervision and observability platform. Supports Python SDK, JavaScript SDK, and REST API.",
+      "version": "1.0.0"
+    }
+  ]
+}

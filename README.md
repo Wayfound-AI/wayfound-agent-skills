@@ -2,9 +2,16 @@
 
 Open-source [agent skills](https://agentskills.io) by [Wayfound](https://wayfound.ai) — the AI agent supervision platform.
 
+## Install (Claude Code)
+
+```
+/plugin marketplace add Wayfound-AI/wayfound-agent-skills
+/plugin install wayfound@wayfound-skills
+```
+
 ## Skills
 
-### wayfound (agent-skills)
+### wayfound
 
 Integrate AI agents with Wayfound's supervision and observability platform. This skill teaches AI coding agents (Claude Code, Codex, Cursor, etc.) how to wire up session transcript reporting using the Python SDK, JavaScript SDK, or REST API.
 
@@ -13,7 +20,7 @@ Integrate AI agents with Wayfound's supervision and observability platform. This
 - **REST API** — Direct HTTP calls for any language
 - **14 event types** — `user_message`, `assistant_message`, `tool_call`, `reasoning_step`, `agent_call`, and more
 
-Skill files: [`agent-skills/wayfound/`](agent-skills/wayfound/)
+Skill files: [`agent-skills/wayfound/skills/wayfound/`](agent-skills/wayfound/skills/wayfound/)
 
 ### wayfound (clawhub)
 
