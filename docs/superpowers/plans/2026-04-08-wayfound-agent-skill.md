@@ -273,6 +273,30 @@ If `WAYFOUND_API_KEY` and `WAYFOUND_AGENT_ID` are set as environment variables, 
 const session = new Session({});
 ```
 
+### Synchronous mode
+
+Set `async: false` to wait for analysis results:
+
+```javascript
+const result = await session.create({ messages, async: false });
+```
+
+### Append to a session
+
+Add more messages to an existing session:
+
+```javascript
+const additionalMessages = [
+  {
+    timestamp: "2025-01-15T10:05:00Z",
+    event_type: "user_message",
+    attributes: { content: "Can you also check Project Beta?" }
+  }
+];
+
+await session.appendToSession({ messages: additionalMessages });
+```
+
 ### Visitor, account, and metadata tracking
 
 ```javascript
@@ -396,7 +420,7 @@ Add the following after the REST API section:
 ````markdown
 ## Key Concepts
 
-**Async vs sync processing:** By default, session creation returns immediately with a session ID while analysis runs in the background. Set `async: false` (REST), `is_async=False` (Python), or handle the returned promise (JavaScript) to wait for analysis results including compliance checks.
+**Async vs sync processing:** By default, session creation returns immediately with a session ID while analysis runs in the background. Set `async: false` (REST/JavaScript) or `is_async=False` (Python) to wait for analysis results including compliance checks.
 
 **Appending messages:** Use the session ID from the create response to append additional messages later. This is useful for long-running conversations where you want to send messages incrementally rather than waiting for the full conversation to complete.
 
