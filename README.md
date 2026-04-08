@@ -17,16 +17,9 @@ This repo is a Claude Code plugin marketplace. Install with two commands:
 
 Once installed, the skill activates automatically when you ask your agent to integrate Wayfound into a project.
 
-### Other Agents (Cursor, Codex, Gemini CLI, etc.)
+### Other Agents
 
-Copy the skill directory into your project:
-
-```bash
-mkdir -p .claude/skills
-cp -r agent-skills/wayfound/skills/wayfound .claude/skills/wayfound
-```
-
-Or reference the `SKILL.md` file directly — any agent that supports the [agentskills.io](https://agentskills.io) format can use it. Check your agent's documentation for how it discovers skills.
+Any agent that supports the [agentskills.io](https://agentskills.io) format can use this skill. Check your agent's documentation for how it discovers and loads skills — each agent has its own mechanism. The skill file is at [`agent-skills/wayfound/skills/wayfound/SKILL.md`](agent-skills/wayfound/skills/wayfound/SKILL.md).
 
 ## Skills
 
