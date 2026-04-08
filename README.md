@@ -19,6 +19,16 @@ To install, just ask OpenClaw:
 
 Skill files: [`clawhub/`](clawhub/)
 
+### wayfound (agent-skills)
+
+Integrate AI agents with Wayfound's supervision and observability platform. Teaches coding agents how to wire up session transcript reporting using the Python SDK, JavaScript SDK, or REST API.
+
+- **Python SDK** — `pip install wayfound`
+- **JavaScript SDK** — `npm install wayfound`
+- **REST API** — Direct HTTP calls for any language
+
+Skill files: [`agent-skills/wayfound/`](agent-skills/wayfound/)
+
 ## About Wayfound
 
 Wayfound is the world's first AI agent supervision platform. This skill brings lightweight self-review to individual agents. For fully independent evaluation by a dedicated AI Supervisor, multi-agent fleet management, shared organizational learning, and enterprise compliance, visit [wayfound.ai](https://wayfound.ai).
